@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const winnerDropdown = document.querySelector('.winner-dropdown');
     const scoreSelected = document.querySelector(".score-selected").value
     const indexPlayers = players.map((player, index) => ({ player, index }));
+
+    const levelUpButton = document.querySelector('.level-up');
+    const notification = document.getElementById('difficulty-notification');
     
     if (players.length === 0) {
         const tr = document.createElement('tr'); // Créez une ligne de tableau
@@ -43,6 +46,25 @@ document.addEventListener('DOMContentLoaded', () => {
         tr.appendChild(td);
         scoresElement.appendChild(tr);
     }
+    document.querySelector('.update-scores').addEventListener('click', () => {
+        const selectedPlayer = winnerDropdown.value;
+        const scoreInput = document.querySelector('.score-selected').value;
+        console.log("hhh")
+    
+        if (selectedPlayer && scoreInput) {
+            // Convertir le score en nombre avant de l'ajouter
+            const scoreToAdd = parseInt(scoreInput, 10);
+            if (!isNaN(scoreToAdd)) {
+                scores[selectedPlayer] += scoreToAdd;
+                updateScores();
+                checkWinner();
+            } else {
+                alert('Veuillez entrer un score valide.');
+            }
+        } else {
+            alert('Veuillez sélectionner un joueur et entrer un score.');
+        }
+    });
     document.querySelector('.random-difficulty').addEventListener('click', () => {
         randomLevelup();
     });
@@ -56,15 +78,31 @@ document.addEventListener('DOMContentLoaded', () => {
             addPlayerDropDown(playerName);
         }
     });
-    document.querySelector('.level-up').addEventListener('click', () => {
+    const notificationParagraph = notification.querySelector('p');
+
+    levelUpButton.addEventListener('click', () => {
+        // Afficher la notification
+        notification.classList.add('show');
+
         if (isLevelUp == false) {
             isLevelUp = true;
-            console.log(isLevelUp)
-        }
-        else {
+            console.log(isLevelUp);
+            notificationParagraph.textContent = "No new difficulty this time.";
+        } else {
             isLevelUp = false;
+            notificationParagraph.textContent = "You leveled up";
         }
-        
+
+        // Masquer la notification après 3 secondes
+        setTimeout(() => {
+            notification.classList.remove('show');
+            notification.classList.add('hide');
+
+            // Réinitialiser la notification après la transition
+            setTimeout(() => {
+                notification.classList.remove('hide');
+            }, 500);
+        }, 3000);
     });
 
     const countdown = () => {
@@ -200,25 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
             winnerDropdown.appendChild(option);
         });
     }
-    document.querySelector('.update-scores').addEventListener('click', () => {
-        const selectedPlayer = winnerDropdown.value;
-        const scoreInput = document.querySelector('.score-selected').value;
-        console.log("hhh")
     
-        if (selectedPlayer && scoreInput) {
-            // Convertir le score en nombre avant de l'ajouter
-            const scoreToAdd = parseInt(scoreInput, 10);
-            if (!isNaN(scoreToAdd)) {
-                scores[selectedPlayer] += scoreToAdd;
-                updateScores();
-                checkWinner();
-            } else {
-                alert('Veuillez entrer un score valide.');
-            }
-        } else {
-            alert('Veuillez sélectionner un joueur et entrer un score.');
-        }
-    });
 
     function checkWinner() {
         for (const player in scores) {
@@ -302,36 +322,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // }
     function randomLevelup() {
         if (gameActive && isLevelUp) {
+            // Vérifie aléatoirement si une difficulté doit être ajoutée
             console.log("Checking for new difficulty...");
+            // Choisir une difficulté aléatoire
+            const randomIndex = Math.floor(Math.random() * cardDifficulties.length);
+            const selectedDifficulty = cardDifficulties[randomIndex];
 
+            // Ajouter la difficulté (par exemple, l'afficher ou l'appliquer)
+            console.log(`New difficulty added: ${selectedDifficulty}`);
+
+            // Appliquer la difficulté (logique supplémentaire selon votre jeu)
+            applyDifficulty(selectedDifficulty);
+
+            // Afficher la pop-up avec la nouvelle difficulté
+            const popup = document.getElementById('random-popup');
+            const popupContent = popup.querySelector('.popup-content p');
             if (Math.random() > 0.5) {
-                const randomIndex = Math.floor(Math.random() * cardDifficulties.length);
-                const selectedDifficulty = cardDifficulties[randomIndex];
-
-                // Update modal with selected difficulty
-                const cardHtml = `
-                    <div class="card">
-                        <div class="card-header">New Difficulty</div>
-                        <div class="card-body">
-                            <h5 class="card-title">${selectedDifficulty}</h5>
-                            <p class="card-text">This difficulty will be applied to your game. Brace yourself!</p>
-                        </div>
-                    </div>
-                `;
-                randomCardContent.innerHTML = cardHtml;
-                randomModal.show(); // Show the popup modal
+                
+                popupContent.textContent = `New difficulty added: ${selectedDifficulty}`;
+                popup.style.display = 'flex';
             } else {
-                console.log("No new difficulty this time.");
-                const cardHtml = `
-                    <div class="card">
-                        <div class="card-header">No Difficulty Added</div>
-                        <div class="card-body">
-                            <p class="card-text">Better luck next time! No new difficulty was added.</p>
-                        </div>
-                    </div>
-                `;
-                randomCardContent.innerHTML = cardHtml;
-                randomModal.show(); // Show the popup modal
+                popupContent.textContent = `No difficulty`;
+                popup.style.display = 'flex';
             }
         }
     }
