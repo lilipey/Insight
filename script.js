@@ -67,6 +67,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelector('.random-start').addEventListener('click', () => {
         randomstartplayer();
+        // Vérifie aléatoirement si une difficulté doit être ajoutée
+        // Choisir une difficulté aléatoire
+
+        // Appliquer la difficulté (logique supplémentaire selon votre jeu
+
+        // Afficher la pop-up avec la nouvelle difficulté
+        const popups = document.querySelector('#random-popup-start-player');
+        const popupContent = document.querySelector('#pop-up-content-start-player p');
+       
+        popupContent.innerHTML = ` it's ${players[currentPlayerIndex]} who beggins`;
+        popups.style.display = 'flex';
+    
     });
     
     if (players.length === 0) {
@@ -436,7 +448,7 @@ function applyDifficulty(difficulty) {
             // Afficher la pop-up avec la nouvelle difficulté
             const popup = document.getElementById('random-popup');
             const popupContent = popup.querySelector('.popup-content p');
-            if (Math.random() > 0.8) {
+            if (Math.random() > 0.2) {
                 popupContent.innerHTML = `${selectedDifficulty.name}\n <br>Explanation: ${selectedDifficulty.explanation}`;
                 popup.style.display = 'flex';
             } else {

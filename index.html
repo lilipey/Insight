@@ -107,21 +107,35 @@
             <p>La difficulté a été sélectionnée aléatoirement.</p>
         </div>
     </div>
-
+    <div class="popup" id="random-popup-start-player">
+        <div class="popup-content" id="pop-up-content-start-player">
+            <span class="close" id="close">&times;</span>
+            <p></p>
+        </div>
+    </div>
 
     
 
 
     <script src="script.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const popup = document.getElementById('random-popup');
-            const closePopupButton = document.querySelector('.popup .close');
+     document.addEventListener('DOMContentLoaded', () => {
+    // Sélectionner toutes les pop-ups et leurs boutons de fermeture
+    const popup = document.querySelector('.popup');
+    const popip =  document.querySelector('#random-popup-start-player');
+    const closePopup = document.querySelector('#close');
 
-            closePopupButton.addEventListener('click', () => {
+    const closePopupButton = document.querySelector('.popup .close');
+
+
+    closePopupButton.addEventListener('click', () => {
                 popup.style.display = 'none';
                 console.log('close');
             });
+    closePopup.addEventListener('click', () => {
+        popip.style.display = 'none';
+                console.log('close');
+            });        
 
             window.addEventListener('click', (event) => {
                 if (event.target === popup) {
@@ -130,6 +144,7 @@
             });
 
         });
+
 
     </script>
 
@@ -572,6 +587,16 @@
         height: auto;
         background-color: #ffffff;
         z-index: 1000; /* Assurez-vous que l'image reste au-dessus des autres éléments */
+
+        main>section:nth-child(2) {
+            width: max(calc(60% - 80px), 100%);
+            height: 100%;
+        }   
+
+        main>section:nth-child(1) {
+            width: max(calc(40% - 80px), 100%);
+            height: 100%;
+        }
     }
 
     /* Ajoutez un padding-top au body pour éviter que le contenu soit caché derrière l'image */
