@@ -12,19 +12,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPlayerIndex = 0;
     let scores = {};
     let gameActive = true;
-    let timeLeft = 60;
+    let timeLeft = 120;
     let isLevelUp = false;
-
+    let start = false;
+    let pause = false;
+    let explanation_difficulty = "";
     
 
      // Tableau des difficultés disponibles
      const cardDifficulties = [
-        "Increase speed",
-        "Reduce time",
-        "Extra challenge",
-        "Random penalty",
-        "Double points",
-        "Lose a turn"
+        { name: "Reverse Logic", explanation: "The green and red pawn have swapped roles!" },
+        { name: "Guess Again", explanation: "Players can only guess three times each during this round!" },
+        { name: "Limited Space 1", explanation: "You can only place pawns in the first column!" },
+        { name: "Limited Space 2", explanation: "You can only place pawns in the second column!" },
+        { name: "Limited Space 3", explanation: "You can only place pawns in the third column!" },
+        { name: "Limited Space 4", explanation: "You can only place pawns in the fourth column!" },
+        { name: "No Green Zone", explanation: "You cannot use the green pawn for this turn!" },
+        { name: "No Red Zone", explanation: "You cannot use the red pawn for this turn!" },
+        { name: "Extra Bonus", explanation: "You have to also use the black pawn!" },
+        { name: "Word Swap", explanation: "You must use the word on the card that you did not originally choose!" },
+        { name: "Speed Round", explanation: "You must place all three pawns within 20 seconds of seeing the card!" }
     ];
     const timeElement = document.querySelector('.time');
     const winnerElement = document.querySelector('.winner');
@@ -36,6 +43,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const levelUpButton = document.querySelector('.level-up');
     const notification = document.getElementById('difficulty-notification');
+
+    document.querySelector('.start-game').addEventListener('click', () => {
+        if (start == false) {
+            console.log("Game started");
+            startGame();
+        } else if (pause == false && start == true) {
+            pauseGame();
+        } else if (pause == true && start == true) {
+            console.log("Game resumed");
+            pause = false;
+            startGame();
+           
+        }
+    });
+    document.querySelector('.restart-game').addEventListener('click', () => {
+        resetGamePage();
+    });
+    document.querySelector('.reset-game').addEventListener('click', () => {
+        resetGame();
+        pauseGame();
+    });
+
+    document.querySelector('.random-start').addEventListener('click', () => {
+        randomstartplayer();
+    });
     
     if (players.length === 0) {
         const tr = document.createElement('tr'); // Créez une ligne de tableau
@@ -69,15 +101,23 @@ document.addEventListener('DOMContentLoaded', () => {
         randomLevelup();
     });
     document.querySelector('.add_player_button').addEventListener('click', () => {
-        console.log("hh")
         const playerName = document.querySelector('input').value;
-        if (playerName && !scores[playerName]) {
-            players.push(playerName);
-            scores[playerName] = 0;
-            updateScores();
-            addPlayerDropDown(playerName);
+        if (players.includes(playerName)) {
+            alert('Player already exists');
+        }
+        else {
+            if (playerName && !scores[playerName]) {
+                players.push(playerName);
+                scores[playerName] = 0;
+                updateScores();
+                addPlayerDropDown(playerName);
+                document.querySelector('input').value = '';
+            }
         }
     });
+    document.querySelector(".next-turn").addEventListener('click', () => {
+        turnPlayer();
+    })
     const notificationParagraph = notification.querySelector('p');
 
     levelUpButton.addEventListener('click', () => {
@@ -87,10 +127,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isLevelUp == false) {
             isLevelUp = true;
             console.log(isLevelUp);
-            notificationParagraph.textContent = "No new difficulty this time.";
+            notificationParagraph.textContent = "You are on the difficulty level";
         } else {
             isLevelUp = false;
-            notificationParagraph.textContent = "You leveled up";
+            notificationParagraph.textContent = "You are on the normal level";
         }
 
         // Masquer la notification après 3 secondes
@@ -132,25 +172,47 @@ document.addEventListener('DOMContentLoaded', () => {
     function randomstartplayer() {
         if (gameActive) {
             currentPlayerIndex = Math.floor(Math.random() * players.length);
-            console.log(players[currentPlayerIndex]);
-            //random player
+            const currentPlayer = players[currentPlayerIndex];
+            console.log(currentPlayer);
+    
+            // Mettre à jour le tableau avec le joueur actuel
+            updateCurrentPlayerInTable(currentPlayer);
         }
+    }
+    
+    function updateCurrentPlayerInTable(currentPlayer) {
+        const tableRows = document.querySelectorAll('.custom-table tbody tr');
+        tableRows.forEach(row => {
+            const playerNameCell = row.querySelector('td:first-child');
+            const currentClueGiverCell = row.querySelector('td:last-child');
+    
+            if (playerNameCell && currentClueGiverCell) {
+                if (playerNameCell.textContent === currentPlayer) {
+                    currentClueGiverCell.textContent = 'Current';
+                } else {
+                    currentClueGiverCell.textContent = '';
+                }
+            }
+        });
+    }
+    function resetGamePage() {
+        location.reload();
     }
     function startGame() {
             gameActive = true;
             countdown();
+            start = true;
             // Démarrer le jeu
     }
-
-    document.querySelector('.start-game').addEventListener('click', () => {
-        startGame();
-    });
+    function resetGame() {
+        timeLeft = 120;
+        timeCount.textContent = timeLeft + "s";
+    }
+    
     document.querySelector('.pause-game').addEventListener('click', () => {
         pauseGame();
     });
-    document.querySelector('.random-start').addEventListener('click', () => {
-        randomstartplayer();
-    });
+   
     function turnPlayer() {
         if (gameActive) {
             // Passer au joueur suivant dans la liste
@@ -201,9 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
         removePlayer();
     })
 
-    document.querySelector(".next-turn").addEventListener('click', () => {
-        turnPlayer();
-    })
+   
 
     function updateScores() {
         scoresElement.innerHTML = '';
@@ -255,38 +315,75 @@ document.addEventListener('DOMContentLoaded', () => {
    
     
     // Fonction pour appliquer la difficulté (à personnaliser)
-    function applyDifficulty(difficulty) {
-        switch (difficulty) {
-            case "Increase speed":
-                // Augmenter la vitesse du jeu
-                console.log("Game speed increased!");
-                break;
-            case "Reduce time":
-                // Réduire le temps restant
-                console.log("Time reduced!");
-                break;
-            case "Extra challenge":
-                // Ajouter un défi supplémentaire
-                console.log("An extra challenge has been added!");
-                break;
-            case "Random penalty":
-                // Appliquer une pénalité aléatoire
-                console.log("A random penalty has been applied!");
-                break;
-            case "Double points":
-                // Doubler les points pour une durée limitée
-                console.log("Points are doubled for now!");
-                break;
-            case "Lose a turn":
-                // Perdre un tour
-                console.log("You lose a turn!");
-                break;
-            default:
-                console.log("Unknown difficulty!");
-        }
+// Fonction pour appliquer la difficulté (à personnaliser)
+function applyDifficulty(difficulty) {
+    let explanation_difficulty;
+    switch (difficulty) {
+        case "Reverse Logic":
+            // The green and red pawn have swapped roles, but you are not allowed to inform the others players.
+            explanation_difficulty = "The green and red pawn have swapped roles!";
+            console.log(explanation_difficulty);
+            break;
+        case "Guess Again":
+            // Players can only guess three times each during this round.
+            explanation_difficulty = "Players can only guess three times each during this round!";
+            console.log(explanation_difficulty);
+            break;
+        case "Limited Space 1":
+            // You can only place pawns in the first column.
+            explanation_difficulty = "You can only place pawns in the first column!";
+            console.log(explanation_difficulty);
+            break;
+        case "Limited Space 2":
+            // You can only place pawns in the second column.
+            explanation_difficulty = "You can only place pawns in the second column!";
+            console.log(explanation_difficulty);
+            break;
+        case "Limited Space 3":
+            // You can only place pawns in the third column.
+            explanation_difficulty = "You can only place pawns in the third column!";
+            console.log(explanation_difficulty);
+            break;
+        case "Limited Space 4":
+            // You can only place pawns in the fourth column.
+            explanation_difficulty = "You can only place pawns in the fourth column!";
+            console.log(explanation_difficulty);
+            break;
+        case "No Green Zone":
+            // You cannot use the green pawn for this turn.
+            explanation_difficulty = "You cannot use the green pawn for this turn!";
+            console.log(explanation_difficulty);
+            break;
+        case "No Red Zone":
+            // You cannot use the red pawn for this turn.
+            explanation_difficulty = "You cannot use the red pawn for this turn!";
+            console.log(explanation_difficulty);
+            break;
+        case "Extra Bonus":
+            // You have to also use the black pawn.
+            explanation_difficulty = "You have to also use the black pawn!";
+            console.log(explanation_difficulty);
+            break;
+        case "Word Swap":
+            // You must use the word on the card that you did not originally choose.
+            explanation_difficulty = "You must use the word on the card that you did not originally choose!";
+            console.log(explanation_difficulty);
+            break;
+        case "Speed Round":
+            // You must place all three pawns within 20 seconds of seeing the card.
+            explanation_difficulty = "You must place all three pawns within 20 seconds of seeing the card!";
+            console.log(explanation_difficulty);
+            break;
+        default:
+            explanation_difficulty = "Unknown difficulty!";
+            console.log(explanation_difficulty);
     }
+}
 
 
+    document.querySelector('.reset-game').addEventListener('click', () => {
+        timeCount.textContent = 0 + "s";
+    });
     document.querySelector('button:nth-of-type(10)').addEventListener('click', () => {
         players = [];
         scores = {};
@@ -297,6 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     function pauseGame() {
         if (gameActive) {
+            pause = true;
             clearTimeout(countdownTimer);
         }
     }
@@ -327,19 +425,19 @@ document.addEventListener('DOMContentLoaded', () => {
             // Choisir une difficulté aléatoire
             const randomIndex = Math.floor(Math.random() * cardDifficulties.length);
             const selectedDifficulty = cardDifficulties[randomIndex];
-
+    
             // Ajouter la difficulté (par exemple, l'afficher ou l'appliquer)
-            console.log(`New difficulty added: ${selectedDifficulty}`);
-
+            console.log(`New difficulty added: ${selectedDifficulty.name}<br>`);
+            console.log(`Explanation: ${selectedDifficulty.explanation}`);
+    
             // Appliquer la difficulté (logique supplémentaire selon votre jeu)
-            applyDifficulty(selectedDifficulty);
-
+            applyDifficulty(selectedDifficulty.name);
+    
             // Afficher la pop-up avec la nouvelle difficulté
             const popup = document.getElementById('random-popup');
             const popupContent = popup.querySelector('.popup-content p');
-            if (Math.random() > 0.5) {
-                
-                popupContent.textContent = `New difficulty added: ${selectedDifficulty}`;
+            if (Math.random() > 0.8) {
+                popupContent.innerHTML = `${selectedDifficulty.name}\n <br>Explanation: ${selectedDifficulty.explanation}`;
                 popup.style.display = 'flex';
             } else {
                 popupContent.textContent = `No difficulty`;
@@ -347,7 +445,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-
 
 });
 
