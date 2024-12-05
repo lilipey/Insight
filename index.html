@@ -11,24 +11,6 @@
 <body>
     <main>
         <section>
-            <div id="timer">
-                <img src="img/logo-insight.png" alt="logo" style="width: 160px; height: 70px; object-fit: contain; background-color: #ffffff;">
-                <h2 class="time-display">
-                    Time: <span class="time">00:00S</span>
-                </h2>
-            </div>
-            <div class="display-turn">
-                <div>
-                    <button class="start-game add-player-button"><i class="material-icons">play_circle</i>Start Timer</button>
-                    <button class="reset-game add-player-button"><i class="material-icons">restart_alt</i>Reset Timer</button>
-                </div>
-                <div>
-                    <button class="next-turn add-player-button"><i class="material-icons">skip_next</i>Next turn</button>
-                    <button class="random-difficulty add-player-button"><i class="material-icons">style</i>Pick a difficulty</button>
-                </div>
-            </div>
-        </section>
-        <section>
             <div class="add-player">
                 <input type="text" placeholder="Player name" class="player-input">
                 <button class="add_player_button add-player-button">Add player</button>
@@ -47,15 +29,17 @@
                         <tbody class="scores">
                         </tbody>
                     </table>
-                    <div style="text-align: center; margin: 10px; margin-top: 20px;">
-                        <div style="display: flex; width: 100%; gap: 10px; justify-content: center;">
-                            <button class="random-start  add-player-button"">Who starts ?</button>
-                            <button class="level-up add-player-button">I want to level up</button>
-                        </div>
-                    </div>
+                    <div style="display: flex; width: 100%; gap: 10px; justify-content: center;">
+                    <button class="random-start  add-player-button" style="margin-top: 20px;">Who starts ?</button>
+                </div>
                     
                 </div>
             </div>
+            <!-- <div style="text-align: center; margin: 10px; margin-top: 20px;">
+                
+                <h4>if you want to choose the difficulty level click here:</h4>
+                <button class="level-up add-player-button">I want to level up</button>
+            </div> -->
             <hr class="custom-divider">
             <div>
                 <div>
@@ -71,12 +55,33 @@
             </div>
             <hr class="custom-divider">
             <button class="restart-game add-player-button" style="height: 100%;">Restart the game </button>
-          
             <!-- <div style="display: flex; width: 100%; gap: 10px; justify-content: center;">
                 <button>resume</button>
                 <button>reset</button>
             </div> -->
         </section>
+        <section>
+            <img src="img/logo-insight.png" alt="logo" style="width: 160px; height: 70px; object-fit: contain;" class="logo">
+            <div id="timer">  
+                <h2 class="time-display">
+                   
+                    Time: <span class="time">00:00S</span>
+                </h2>
+            </div>
+            <div class="display-turn">
+                <div>
+                    <button class="random-difficulty add-player-button" style="background-color:#ee9da9"><i class="material-icons">style</i>Pick a challenge card</button>
+                    <button class="start-game add-player-button"><i class="material-icons">play_circle</i>Start/Pause Timer</button>
+
+                </div>
+                <div>
+                    <button class="next-turn add-player-button"><i class="material-icons">skip_next</i>Next turn</button>
+                    <button class="reset-game add-player-button"><i class="material-icons">restart_alt</i>Reset Timer</button>
+                   
+                </div>
+            </div>
+        </section>
+        
         <div style="display: flex; width: 100%; gap: 10px; justify-content: center; flex-direction: column;">
             <h2 style="text-align: center;">The winner : <span class="winner"></span></h2>
         </div>
@@ -98,7 +103,7 @@
     <div class="popup" id="random-popup">
         <div class="popup-content">
             <span class="close">&times;</span>
-            <h2>Random Difficulty</h2>
+            <h2> Challenge</h2>
             <p>La difficulté a été sélectionnée aléatoirement.</p>
         </div>
     </div>
@@ -168,11 +173,11 @@
         gap: 20px;
     }
 
-    main>section:nth-child(1) {
+    main>section:nth-child(2) {
         width: max(calc(60% - 80px), 400px);
     }
 
-    main>section:nth-child(2) {
+    main>section:nth-child(1) {
         width: max(calc(40% - 80px), 400px);
     }
 
@@ -340,6 +345,8 @@
 
     /**time**/
     .time-display {
+        width: 100%;
+        text-align: center;
         font-family: 'Arial', sans-serif;
         font-size: 24px;
         color: #333333;
@@ -539,19 +546,39 @@
         margin-right: auto;
     }
    .popup-content {
-      width: 300px;
-      height: 200px;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    border: solid 3px #000;
+       width: 320px;
+       height: 210px;
+       background-color: #fff;
+       padding: 20px;
+       text-align: center;
+       position: relative;
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+       align-items: center;
+        border-radius: 0px;
+        border: solid 3px #ee9da9;
    }
+
+   /* Media query pour les écrans de moins de 768px de large */
+@media (max-width: 768px) {
+    .logo {
+        background-color: #ffffff;
+        width: 100%!important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        background-color: #ffffff;
+        z-index: 1000; /* Assurez-vous que l'image reste au-dessus des autres éléments */
+    }
+
+    /* Ajoutez un padding-top au body pour éviter que le contenu soit caché derrière l'image */
+    body {
+        padding-top: 70px; /* Ajustez cette valeur en fonction de la hauteur de votre image */
+    }
+}
 </style>
 
 </html>

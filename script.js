@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let scores = {};
     let gameActive = true;
     let timeLeft = 120;
-    let isLevelUp = false;
+    let isLevelUp = true;
     let start = false;
     let pause = false;
     let explanation_difficulty = "";
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoreSelected = document.querySelector(".score-selected").value
     const indexPlayers = players.map((player, index) => ({ player, index }));
 
-    const levelUpButton = document.querySelector('.level-up');
+    // const levelUpButton = document.querySelector('.level-up');
     const notification = document.getElementById('difficulty-notification');
 
     document.querySelector('.start-game').addEventListener('click', () => {
@@ -120,30 +120,30 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     const notificationParagraph = notification.querySelector('p');
 
-    levelUpButton.addEventListener('click', () => {
-        // Afficher la notification
-        notification.classList.add('show');
+    // levelUpButton.addEventListener('click', () => {
+    //     // Afficher la notification
+    //     notification.classList.add('show');
 
-        if (isLevelUp == false) {
-            isLevelUp = true;
-            console.log(isLevelUp);
-            notificationParagraph.textContent = "You are on the difficulty level";
-        } else {
-            isLevelUp = false;
-            notificationParagraph.textContent = "You are on the normal level";
-        }
+    //     if (isLevelUp == false) {
+    //         isLevelUp = true;
+    //         console.log(isLevelUp);
+    //         notificationParagraph.textContent = "You are on the difficulty level";
+    //     } else {
+    //         isLevelUp = false;
+    //         notificationParagraph.textContent = "You are on the normal level";
+    //     }
 
-        // Masquer la notification après 3 secondes
-        setTimeout(() => {
-            notification.classList.remove('show');
-            notification.classList.add('hide');
+    //     // Masquer la notification après 3 secondes
+    //     setTimeout(() => {
+    //         notification.classList.remove('show');
+    //         notification.classList.add('hide');
 
-            // Réinitialiser la notification après la transition
-            setTimeout(() => {
-                notification.classList.remove('hide');
-            }, 500);
-        }, 3000);
-    });
+    //         // Réinitialiser la notification après la transition
+    //         setTimeout(() => {
+    //             notification.classList.remove('hide');
+    //         }, 500);
+    //     }, 3000);
+    // });
 
     const countdown = () => {
         if (timeLeft <= 0) {
@@ -375,7 +375,7 @@ function applyDifficulty(difficulty) {
             console.log(explanation_difficulty);
             break;
         default:
-            explanation_difficulty = "Unknown difficulty!";
+            explanation_difficulty = "No challenge!";
             console.log(explanation_difficulty);
     }
 }
@@ -440,7 +440,7 @@ function applyDifficulty(difficulty) {
                 popupContent.innerHTML = `${selectedDifficulty.name}\n <br>Explanation: ${selectedDifficulty.explanation}`;
                 popup.style.display = 'flex';
             } else {
-                popupContent.textContent = `No difficulty`;
+                popupContent.textContent = `No challenge`;
                 popup.style.display = 'flex';
             }
         }
