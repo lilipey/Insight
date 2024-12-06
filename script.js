@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function checkWinner() {
         for (const player in scores) {
-            if (scores[player] >= 20) {
+            if (scores[player] >= 30) {
                 winnerElement.textContent = player;
                 gameActive = false;
                 alert(`${player} a gagné !`);
